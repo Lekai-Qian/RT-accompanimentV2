@@ -1,0 +1,16 @@
+{
+  "job_name": "base_no_prefix_piece12_25s_27s",
+  "source_midi": "/data/home/yuanxin/RT-accompanimentV2/offline-0318/generated_samples-base-no-prefix/20260317_200010_12_5817834.mid",
+  "source_gt_midi": "/data/home/yuanxin/RT-accompanimentV2/offline-0318/generated_samples-base-no-prefix/20260317_200010_12_5817834_GT.mid",
+  "source_manifest": "/data/home/yuanxin/RT-accompanimentV2/offline-0318/generated_samples-base-no-prefix/20260317_200010_manifest.json",
+  "sample_id": 12,
+  "seed": 20260317,
+  "bpm": 120,
+  "bad_regions_sec": [
+    {
+      "t0": 25.0,
+      "t1": 27.0,
+      "note": "12th piece in Base (No Prefix); key change around 25-27s"
+    }
+  ]
+}

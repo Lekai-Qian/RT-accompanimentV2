@@ -1,0 +1,9 @@
+scope,run_dir,num_pairs,fmd,ci_low,ci_high,ci_level
+global,.,140,19.08,3.479,56.05,0.95
+by_run,generated_samples-base,20,2.917,3.735,26.11,0.95
+by_run,generated_samples-base-no-prefix,20,9.044,5.234,44.67,0.95
+by_run,generated_samples-initdrop2p0p3-0316_0833,20,1.838,3.118,23.27,0.95
+by_run,generated_samples-initdrop2p0p3-0316_0833-with-no-prefix,20,6.079,4.03,29.49,0.95
+by_run,generated_samples-initial-drop-acc-2,20,23.29,4.833,87.8,0.95
+by_run,generated_samples-initial-drop-acc-2-with-no-prefix,20,11.41,5.985,53.41,0.95
+by_run,generated_samples-shift-3,20,118.2,4.977,411.2,0.95

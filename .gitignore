@@ -52,3 +52,6 @@ tmp/
 temp/
 *.tmp
 *.log
+local_tmp/
+repair_outputs/
+*manifest.json

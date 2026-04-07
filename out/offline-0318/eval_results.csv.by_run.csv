@@ -1,0 +1,8 @@
+run_dir,num_pairs,onset_p_mean,onset_r_mean,onset_f1_mean,pitch_acc_mean,pitch_jsd_mean,onset_jsd_mean,matched_mean,note_density_ref_mean,note_density_gen_mean,fmd,fmd_ci_low,fmd_ci_high
+generated_samples-base,20,0.7391,0.7006,0.7053,0.4661,0.09515,0.01236,440.7,6.702,6.604,2.917,3.735,26.11
+generated_samples-base-no-prefix,20,0.7258,0.6227,0.6478,0.4214,0.1933,0.01968,400.2,6.702,5.867,9.044,5.234,44.67
+generated_samples-initdrop2p0p3-0316_0833,20,0.743,0.7294,0.7246,0.4586,0.08591,0.009632,460.5,6.702,6.699,1.838,3.118,23.27
+generated_samples-initdrop2p0p3-0316_0833-with-no-prefix,20,0.6935,0.6111,0.6351,0.4187,0.1608,0.02627,379.4,6.702,5.829,6.079,4.03,29.49
+generated_samples-initial-drop-acc-2,20,0.7497,0.7037,0.7154,0.4689,0.1027,0.01462,441.8,6.702,6.308,23.29,4.833,87.8
+generated_samples-initial-drop-acc-2-with-no-prefix,20,0.6011,0.6326,0.5876,0.4094,0.1733,0.05884,404.2,6.702,7.195,11.41,5.985,53.41
+generated_samples-shift-3,20,0.7325,0.7022,0.7061,0.4506,0.09205,0.01238,426.7,6.702,6.389,118.2,4.977,411.2

@@ -1,0 +1,16 @@
+{
+  "job_name": "initdrop_piece_0001_bad_bass_fill",
+  "source_midi": "offline-0318/generated_samples-initdrop2p0p3-0316_0833/20260318_0001_piece.mid",
+  "source_gt_midi": "offline-0318/generated_samples-initdrop2p0p3-0316_0833/20260318_0001_piece_GT.mid",
+  "source_manifest": "offline-0318/generated_samples-initdrop2p0p3-0316_0833/20260318_manifest.json",
+  "sample_id": 0,
+  "seed": 20260318,
+  "bpm": 120,
+  "bad_regions_sec": [
+    {
+      "t0": 23.4,
+      "t1": 28.1,
+      "note": "bass pattern sounds messy"
+    }
+  ]
+}

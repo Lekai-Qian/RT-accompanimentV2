@@ -11,7 +11,7 @@
 import os
 
 # 设置可见的GPU设备
-os.environ["CUDA_VISIBLE_DEVICES"] = "5"
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 import safetensors.torch
 from torch.utils.data import DataLoader
 from transformers import LlamaConfig

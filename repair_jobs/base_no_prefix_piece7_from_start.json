@@ -1,0 +1,16 @@
+{
+  "job_name": "base_no_prefix_piece7_from_start",
+  "source_midi": "/data/home/yuanxin/RT-accompanimentV2/offline-0318/generated_samples-base-no-prefix/20260317_200010_7_6319296.mid",
+  "source_gt_midi": "/data/home/yuanxin/RT-accompanimentV2/offline-0318/generated_samples-base-no-prefix/20260317_200010_7_6319296_GT.mid",
+  "source_manifest": "/data/home/yuanxin/RT-accompanimentV2/offline-0318/generated_samples-base-no-prefix/20260317_200010_manifest.json",
+  "sample_id": 7,
+  "seed": 20260317,
+  "bpm": 120,
+  "bad_regions_sec": [
+    {
+      "t0": 0.0,
+      "t1": 4.0,
+      "note": "7th piece in Base (No Prefix); problematic from the beginning, so regenerate from beat 0"
+    }
+  ]
+}
