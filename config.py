@@ -20,7 +20,7 @@ class TrainingConfig:
     output_dir: str = ""  # 留空时自动绑定到 experiment_name
     num_epochs: int = 4
     save_model_epochs: int = 1
-    train_batch_size = 16
+    train_batch_size: int = 16
     gradient_accumulation_steps: int = 32  # effective batch = 16×32=512
     lr_warmup_steps: int = 200
     mixed_precision: Literal["no", "fp16", "bf16"] = "bf16"  # H200 原生支持 bf16，更稳定
@@ -35,8 +35,8 @@ class TrainingConfig:
     tensorboard_log_name: str = ""  # 留空时自动绑定到 experiment_name
     # standard (192K files): allxml_npz_dual_track_optimized_no_underscore
     # augmented (342K files): allxml_npz_dual_track_optimized
-    data_dir = "/data/home/yuanxin/data/allxml_npz_dual_track_optimized_no_underscore"
-    save_steps = -1
+    data_dir: str = "/data/home/yuanxin/data/allxml_npz_dual_track_optimized_no_underscore"
+    save_steps: int = -1
 
     # 测试集配置
     use_test_set: bool = True  # 是否使用测试集
@@ -52,11 +52,11 @@ class TrainingConfig:
 
     # Drop Initial Beats 训练增强
     # drop_initial_beats: drop 每首曲子前 N 个 beat 的 acc（强制"冷启动"）
-    # 0 = 关闭（默认），推荐值 2
-    drop_initial_beats: int = 2
+    # 0 = 关闭（默认）
+    drop_initial_beats: int = 0
     # drop_initial_beats_prob: 应用概率
-    # 1.0 = 总是 drop 前 N beat，0.5 = 50% 概率 drop 前 N beat
-    drop_initial_beats_prob: float = 0.3
+    # 0.0 = 关闭（默认），1.0 = 总是 drop 前 N beat，0.5 = 50% 概率 drop 前 N beat
+    drop_initial_beats_prob: float = 0.0
 
     # Position Shift 训练增强
     # 每首曲子随机采样 Δ ∈ {0,...,pos_shift_max}，整体偏移 beat 内的位置标记

@@ -257,7 +257,7 @@ def main() -> None:
     parser.add_argument("--fallback-policy", type=str, choices=["empty", "hold_last"], default="empty")
     parser.add_argument("--max-ticks", type=int, default=None, help="optional limit for quick smoke tests")
 
-    parser.add_argument("--output-dir", type=str, default="generated_samples_realtime_sim")
+    parser.add_argument("--output-dir", type=str, default="local_tmp/generated_samples_realtime_sim")
     parser.add_argument("--export-gt-midi", action=argparse.BooleanOptionalAction, default=True)
 
     parser.add_argument("--temperature", type=float, default=1.1)

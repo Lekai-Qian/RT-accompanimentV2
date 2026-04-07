@@ -192,7 +192,7 @@ def patch_schedule_with_generated_prefix(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Repair accompaniment by regenerating from a marked bad region.")
     parser.add_argument("--job", required=True, help="path to one repair job json")
-    parser.add_argument("--output-root", default="repair_outputs", help="root directory for repair outputs")
+    parser.add_argument("--output-root", default="local_tmp/repair_outputs", help="root directory for repair outputs")
     parser.add_argument("--device", default="auto", help="auto/cpu/cuda/cuda:0")
     parser.add_argument("--use-fp16", action="store_true", help="run model in fp16")
     parser.add_argument("--seed", type=int, default=None, help="override generation seed")

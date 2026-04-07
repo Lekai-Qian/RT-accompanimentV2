@@ -11,7 +11,7 @@ if [[ -f "$DEFAULTS_FILE" ]]; then
 fi
 
 JOB="${JOB:-repair_jobs/example_job.json}"
-OUTPUT_ROOT="${OUTPUT_ROOT:-repair_outputs}"
+OUTPUT_ROOT="${OUTPUT_ROOT:-local_tmp/repair_outputs}"
 DEVICE="${DEVICE:-auto}"
 USE_FP16="${USE_FP16:-false}"
 SEED="${SEED:-}"

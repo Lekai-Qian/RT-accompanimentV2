@@ -10,7 +10,8 @@ if [[ -f "$DEFAULTS_FILE" ]]; then
   source "$DEFAULTS_FILE"
 fi
 
-CKPT="${CKPT:-checkpoints-drop-0.2/epoch_3_0311_1354/model.safetensors}"
+CKPT="${CKPT:-}"
+CKPT_GLOB="${CKPT_GLOB:-}"
 NUM_SAMPLES="${NUM_SAMPLES:-20}"
 SEED="${SEED:-20260317}"
 OUTPUT_DIR="${OUTPUT_DIR:-generated_samples_repro}"
@@ -18,6 +19,25 @@ DATASET_MODE="${DATASET_MODE:-test}"
 SAMPLING_MODE="${SAMPLING_MODE:-with_replacement}"
 GT_PREFIX_BEATS="${GT_PREFIX_BEATS:-12}"
 EXPORT_GT_MIDI="${EXPORT_GT_MIDI:-true}"
+
+if [[ -z "$CKPT" && -n "$CKPT_GLOB" ]]; then
+  CKPT_PATTERN="$CKPT_GLOB"
+  if [[ "$CKPT_PATTERN" != /* ]]; then
+    CKPT_PATTERN="$ROOT_DIR/$CKPT_PATTERN"
+  fi
+  shopt -s nullglob
+  MATCHED_CKPTS=($CKPT_PATTERN)
+  shopt -u nullglob
+  if [[ ${#MATCHED_CKPTS[@]} -eq 0 ]]; then
+    echo "No checkpoints matched CKPT_GLOB=$CKPT_GLOB" >&2
+    exit 1
+  fi
+  CKPT="$(ls -1t "${MATCHED_CKPTS[@]}" | head -n 1)"
+fi
+
+if [[ -z "$CKPT" ]]; then
+  CKPT="checkpoints-drop-0.2/epoch_3_0311_1354/model.safetensors"
+fi
 
 if [[ "$CKPT" != /* ]]; then
   CKPT="$ROOT_DIR/$CKPT"

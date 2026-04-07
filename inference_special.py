@@ -119,7 +119,7 @@ def main() -> None:
     parser.add_argument("--acc-prefix-mode", type=str, choices=["gt", "none"], default="gt")
     parser.add_argument("--melody-mode", type=str, choices=["inject", "generate"], default="inject")
 
-    parser.add_argument("--output-dir", type=str, default="generated_samples_special")
+    parser.add_argument("--output-dir", type=str, default="local_tmp/generated_samples_special")
     parser.add_argument("--export-gt-midi", action=argparse.BooleanOptionalAction, default=True)
 
     parser.add_argument("--temperature", type=float, default=1.1)
