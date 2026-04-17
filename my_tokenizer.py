@@ -464,6 +464,7 @@ class PianoMusicTokenizer:
         pos_shift_max: int = 0,
         drop_initial_beats: int = 0,
         drop_initial_beats_prob: float = 1.0,
+        include_melody_loss: bool = False,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         构建完整的训练序列 (input_ids, labels)。
@@ -471,8 +472,9 @@ class PianoMusicTokenizer:
         序列格式:
           [BOS][TS][BPM] [bar][beat][acc...track_acc][mel...track_mel] [beat]... [bar]... [EOS]
 
-        Labels: bar/beat_marker/mel 部分用 pad_token_id 填充（不参与 loss），
+        Labels: bar/beat_marker 部分用 pad_token_id 填充（不参与 loss），
                 acc 部分作为预测目标。
+                当 include_melody_loss=True 时，mel 部分也作为预测目标。
                 当 acc_drop_prob > 0 时，随机将某些 beat 的 acc 替换为空，
                 这些 beat 的 acc 也不参与 loss（强迫模型减少对 acc history 的依赖）。
                 当 drop_initial_beats > 0 时，drop 每首曲子前 N 个 beat 的 acc（冷启动），
@@ -531,9 +533,12 @@ class PianoMusicTokenizer:
                     inp_parts.append(acc)
                     lbl_parts.append(acc)
 
-                # [mel tokens] — 条件输入，不参与 loss
+                # [mel tokens] — 条件输入；可选加入 loss
                 inp_parts.append(mel)
-                lbl_parts.append(torch.full_like(mel, v.pad_token_id))
+                if include_melody_loss:
+                    lbl_parts.append(mel)
+                else:
+                    lbl_parts.append(torch.full_like(mel, v.pad_token_id))
 
                 global_beat_idx += 1
 
@@ -646,26 +651,42 @@ class PianoMusicTokenizer:
         """
         v = self.vocab
 
-        # 展平
-        flat = []
+        beat_images = []
+        beat_width = getattr(v, "default_patch_w", 4)
+
         for beat in beats_list:
             if isinstance(beat, torch.Tensor):
-                flat.extend(beat.cpu().tolist())
-            elif isinstance(beat, (list, np.ndarray)):
-                flat.extend(beat if isinstance(beat, list) else beat.tolist())
+                beat_tokens = beat.cpu().tolist()
+            elif isinstance(beat, np.ndarray):
+                beat_tokens = beat.tolist()
+            elif isinstance(beat, list):
+                beat_tokens = beat
             else:
-                flat.append(beat)
+                beat_tokens = [beat]
 
-        # 过滤掉 >= beat_marker 的结构标记（bar, bos, eos, pad, ts, bpm 等）
-        # 保留: patch tokens(0-80), position markers(81-168), empty(169), track markers(170-171)
-        filtered = np.array([t for t in flat if t < v.beat_marker], dtype=np.int64)
+            # 只保留当前 beat 内的 patch / position / empty / track-end token。
+            filtered = np.array([t for t in beat_tokens if t < v.beat_marker], dtype=np.int64)
 
-        if len(filtered) == 0:
+            if len(filtered) == 0:
+                beat_img = np.zeros((2, v.img_h, beat_width), dtype=np.float32)
+            else:
+                mat = self.decompress_tokens(filtered, track_marker_id=track_marker_id)
+                beat_img = self._codec.patch_tokens_to_image(mat)
+                if beat_img.shape[2] < beat_width:
+                    beat_img = np.pad(
+                        beat_img,
+                        ((0, 0), (0, 0), (0, beat_width - beat_img.shape[2])),
+                        mode="constant",
+                    )
+                elif beat_img.shape[2] > beat_width:
+                    beat_img = beat_img[:, :, :beat_width]
+
+            beat_images.append(beat_img)
+
+        if not beat_images:
             return np.zeros((2, v.img_h, 0), dtype=np.float32)
 
-        # 解压 → token 矩阵 → piano roll
-        mat = self.decompress_tokens(filtered, track_marker_id=track_marker_id)
-        return self._codec.patch_tokens_to_image(mat)
+        return np.concatenate(beat_images, axis=2)
 
     # ===================== 工具方法 =====================
 

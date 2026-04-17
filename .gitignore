@@ -55,3 +55,11 @@ temp/
 local_tmp/
 repair_outputs/
 *manifest.json
+
+# Offline experiment artifacts
+out/
+offline-*/
+generated_samples*/
+listening_bundles/
+hf_upload/
+user_midi_recording*/

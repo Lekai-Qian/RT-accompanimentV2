@@ -1,10 +1,12 @@
 """
-inference_special.py — experimental inference entrypoint
+DEPRECATED experimental entrypoint.
 
-Goals:
+inference_special.py originally bundled multiple stress-test ideas together:
 1. overwrite the front acc prompt to simulate without-prompt behavior
-2. optionally generate melody instead of injecting GT melody, to stress-test
-   whether the current model collapses when melody is also autoregressively produced
+2. optionally generate melody instead of injecting GT melody
+
+These focused modes are now being split into dedicated scripts under
+`Inference/` for cleaner experiment control.
 """
 
 from __future__ import annotations

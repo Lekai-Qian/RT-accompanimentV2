@@ -27,6 +27,7 @@ class PianoDataset(Dataset):
         pos_shift_max=0,
         drop_initial_beats=0,
         drop_initial_beats_prob=1.0,
+        include_melody_loss=False,
     ):
         """
         Args:
@@ -46,6 +47,7 @@ class PianoDataset(Dataset):
         self.pos_shift_max = pos_shift_max
         self.drop_initial_beats = drop_initial_beats
         self.drop_initial_beats_prob = drop_initial_beats_prob
+        self.include_melody_loss = include_melody_loss
 
         # 唯一的 tokenizer 入口
         self.tokenizer = PianoMusicTokenizer(config=config)
@@ -145,6 +147,7 @@ class PianoDataset(Dataset):
             pos_shift_max=self.pos_shift_max,
             drop_initial_beats=self.drop_initial_beats,
             drop_initial_beats_prob=self.drop_initial_beats_prob,
+            include_melody_loss=self.include_melody_loss,
         )
 
         # 6. 截断

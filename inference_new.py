@@ -98,6 +98,25 @@ def select_indices(population_size: int, num_samples: int, seed: int, sampling_m
     return rng.choice(population_size, size=num_samples, replace=False).tolist()
 
 
+def load_indices_file(path: str) -> List[int]:
+    path_obj = Path(path)
+    text = path_obj.read_text(encoding="utf-8").strip()
+    if not text:
+        raise ValueError(f"indices file is empty: {path}")
+
+    if path_obj.suffix.lower() == ".json":
+        payload = json.loads(text)
+        if not isinstance(payload, list):
+            raise ValueError("indices json must be a list of integers")
+        indices = [int(x) for x in payload]
+    else:
+        indices = [int(line.strip()) for line in text.splitlines() if line.strip()]
+
+    if not indices:
+        raise ValueError(f"no indices loaded from: {path}")
+    return indices
+
+
 def prepare_generation(dataset: PianoDataset, condition_idx: int, gt_prefix_beats: int = 12) -> Dict:
     """从 dataset 加载曲目并构建 generation 计划。"""
     tokenizer = dataset.tokenizer
@@ -107,6 +126,10 @@ def prepare_generation(dataset: PianoDataset, condition_idx: int, gt_prefix_beat
     save_dict = np.load(file_path, allow_pickle=True)
     metadata = save_dict["metadata"].item()
     measures = [save_dict[f"measure_{i}"] for i in range(metadata["num_measures"])]
+    total_steps = int(sum(int(measure.shape[2]) for measure in measures))
+    bpm = int(metadata.get("bpm", 120) or 120)
+    sec_per_16th = 60.0 / bpm / 4.0
+    piece_length_sec = float(total_steps * sec_per_16th)
 
     gen_data = tokenizer.build_generation_schedule(
         measures=measures,
@@ -129,8 +152,10 @@ def prepare_generation(dataset: PianoDataset, condition_idx: int, gt_prefix_beat
         "acc_beats_gt": gen_data["acc_beats_gt"],
         "metadata": {
             "time_signature_idx": ts_idx,
-            "bpm": int(metadata.get("bpm", 120) or 120),
+            "bpm": bpm,
             "num_measures": int(metadata["num_measures"]),
+            "piece_length_sec": piece_length_sec,
+            "total_steps": total_steps,
         },
     }
 
@@ -151,6 +176,7 @@ def main() -> None:
     parser.add_argument("--data-dir", type=str, default=None, help="数据目录；默认读取 TrainingConfig")
     parser.add_argument("--num-samples", type=int, default=50, help="抽样数量")
     parser.add_argument("--seed", type=int, default=42, help="随机种子")
+    parser.add_argument("--indices-file", type=str, default=None, help="显式指定 dataset indices 文件（json 列表或每行一个整数）")
     parser.add_argument(
         "--sampling-mode",
         type=str,
@@ -217,12 +243,22 @@ def main() -> None:
     if len(dataset) == 0:
         raise RuntimeError("数据集为空，无法抽样")
 
-    indices = select_indices(
-        population_size=len(dataset),
-        num_samples=args.num_samples,
-        seed=args.seed,
-        sampling_mode=args.sampling_mode,
-    )
+    if args.indices_file:
+        indices_file = os.path.abspath(os.path.expanduser(args.indices_file))
+        indices = load_indices_file(indices_file)
+        if args.num_samples != len(indices):
+            print(
+                f"indices-file 提供 {len(indices)} 个样本，将覆盖 num-samples={args.num_samples}",
+                flush=True,
+            )
+    else:
+        indices_file = None
+        indices = select_indices(
+            population_size=len(dataset),
+            num_samples=args.num_samples,
+            seed=args.seed,
+            sampling_mode=args.sampling_mode,
+        )
 
     model = None
     if not args.prepare_only:
@@ -299,8 +335,9 @@ def main() -> None:
         "device": device,
         "ckpt": ckpt_path,
         "prepare_only": bool(args.prepare_only),
-        "num_samples": int(args.num_samples),
+        "num_samples": int(len(indices)),
         "sampling_mode": args.sampling_mode,
+        "indices_file": indices_file,
         "dataset": {
             "data_dir": data_dir,
             "mode": args.dataset_mode,

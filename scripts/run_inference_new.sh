@@ -36,7 +36,8 @@ if [[ -z "$CKPT" && -n "$CKPT_GLOB" ]]; then
 fi
 
 if [[ -z "$CKPT" ]]; then
-  CKPT="checkpoints-drop-0.2/epoch_3_0311_1354/model.safetensors"
+  echo "CKPT is required. Set CKPT=/path/to/model.safetensors or CKPT_GLOB=/path/pattern" >&2
+  exit 1
 fi
 
 if [[ "$CKPT" != /* ]]; then

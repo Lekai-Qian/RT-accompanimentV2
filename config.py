@@ -63,6 +63,11 @@ class TrainingConfig:
     # 使 BEAT token 不再是严格的"位置0"锚点，增强泛化
     # 0 = 关闭（默认），推荐值 3
     pos_shift_max: int = 0
+
+    # Melody Loss 训练选项
+    # False = mel 仍作为条件输入，不额外加入监督
+    # True  = mel token 也作为预测目标加入 loss
+    include_melody_loss: bool = False
     random_seed: int = 42  # 数据集划分的随机种子
 
     def __post_init__(self):
@@ -90,6 +95,9 @@ class TrainingConfig:
             if self.drop_initial_beats_prob < 1.0:
                 part += f"p{_format_exp_value(self.drop_initial_beats_prob)}"
             parts.append(part)
+
+        if self.include_melody_loss:
+            parts.append("melloss")
 
         return "_".join(parts)
 

@@ -24,8 +24,11 @@ Notes:
 import argparse
 import os
 import csv
+
 import numpy as np
 import pretty_midi
+
+from eval_acc_jsd_bridge import compute_eval_acc_style_jsd
 
 
 def load_notes_and_tempo(midi_path):
@@ -48,6 +51,11 @@ def load_notes_and_tempo(midi_path):
 def load_notes(midi_path):
     onsets, pitches, duration, _ = load_notes_and_tempo(midi_path)
     return onsets, pitches, duration
+
+
+def compute_eval_acc_jsd(ref_path, gen_path):
+    """Compute pitch/onset JSD using the canonical eval_acc.py definitions."""
+    return compute_eval_acc_style_jsd(ref_path, gen_path)
 
 
 def match_onsets(ref_onsets, est_onsets, tol=0.05):
@@ -138,11 +146,7 @@ def eval_pair(ref_path, gen_path, tol=0.05):
 
     note_density_ref = len(ref_onsets) / ref_dur if ref_dur > 0 else 0.0
     note_density_gen = len(gen_onsets) / gen_dur if gen_dur > 0 else 0.0
-    pitch_jsd = jsd_from_hists(pitch_histogram(ref_pitches), pitch_histogram(gen_pitches))
-    onset_jsd = jsd_from_hists(
-        onset_phase_histogram(ref_onsets, ref_bpm),
-        onset_phase_histogram(gen_onsets, gen_bpm),
-    )
+    pitch_jsd, onset_jsd = compute_eval_acc_jsd(ref_path, gen_path)
 
     return {
         "ref_file": os.path.basename(ref_path),

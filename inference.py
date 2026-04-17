@@ -1,8 +1,12 @@
 """
+DEPRECATED / LEGACY ENTRYPOINT.
+
 inference.py — 推理编排层
 
 职责: 加载数据 → tokenizer 构建 schedule → model 生成 → MidiConverter 输出
-是唯一涉及文件 I/O + 模型 + 转换器的胶水代码。
+是较早的离线推理胶水代码，保留主要用于参考和向后兼容。
+
+正式离线实验建议改用 `inference_new.py`。
 """
 
 from pathlib import Path
